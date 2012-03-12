@@ -1,0 +1,5 @@
+Whis plugin was written by:
+- Mathieu Bridon <mathieu.bridon@network-box.com> (work address)
+                 <bochecha@fedoraproject.org>     (personal address)
+
+Submit a patch, commit a change, and have your name written here.

@@ -1,0 +1,12 @@
+# -- Auto-generated distutils files ------------------------------------------
+build
+dist
+MANIFEST
+
+# -- Python compiled files ---------------------------------------------------
+*.pyo
+*.pyc
+
+# -- Editors temp files ------------------------------------------------------
+*.swp
+*~
