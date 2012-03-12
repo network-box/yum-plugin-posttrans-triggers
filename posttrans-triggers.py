@@ -14,13 +14,21 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+from ConfigParser import RawConfigParser
+import glob
 import os
+import shlex
+import subprocess
+
 from yum.plugins import TYPE_CORE
 
 requires_api_version = '2.6'
 plugin_type = (TYPE_CORE,)
 
 always_run_triggers = False
+
+triggers_configs_path = "/etc/yum/pluginconf.d/posttrans-triggers.conf.d"
+
 
 def posttrans_hook(conduit):
     global always_run_triggers
@@ -31,9 +39,26 @@ def posttrans_hook(conduit):
     if not always_run_triggers and not (opts and opts.posttrans_triggers):
         return
 
+    # Parse the trigger configs
+    triggers_files = glob.glob(os.path.join(triggers_configs_path, "*.conf"))
+    triggers_config = RawConfigParser()
+    triggers_config.read(triggers_files)
+
+    # Look at the files impacted by the transaction
+    triggers = set()
     ts = conduit.getTsInfo()
     for tsmem in ts.getMembers():
-        pass
+        pkg_files = tsmem.po.filelist
+
+        for f in pkg_files:
+            for path in triggers_config.sections():
+                if f.startswith(path):
+                    cmd = triggers_config.get(path, "exec")
+                    triggers.add(shlex.split(cmd))
+
+    for cmd in triggers:
+        proc = subprocess.Popen(cmd.split(), stdout=subprocess.NULL, stderr=subprocess.NULL)
+        proc.communicate()
 
 def config_hook(conduit):
     global always_run_triggers
