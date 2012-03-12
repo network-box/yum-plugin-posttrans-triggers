@@ -51,16 +51,22 @@ def posttrans_hook(conduit):
             triggers_config.remove_section(s)
 
     # Look at the files impacted by the transaction
+    files_seen = []
     triggers = set()
     ts = conduit.getTsInfo()
     for tsmem in ts.getMembers():
         pkg_files = tsmem.po.filelist
 
         for f in pkg_files:
+            if f in files_seen:
+                continue
+
             for path in triggers_config.sections():
                 if f.startswith(path):
                     cmd = triggers_config.get(path, "exec")
                     triggers.add(shlex.split(cmd))
+
+            files_seen.append(f)
 
     for cmd in triggers:
         proc = subprocess.Popen(cmd.split(), stdout=subprocess.NULL, stderr=subprocess.NULL)
