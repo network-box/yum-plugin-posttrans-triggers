@@ -80,6 +80,11 @@ def posttrans_hook(conduit):
             for path in triggers_config.sections():
                 if f.startswith(path):
                     t = triggers_config.get(path, "exec")
+
+                    # Try to be helpful
+                    env = {"file": f, "path": path}
+                    t = t % env
+
                     triggers.add(t)
 
             files_seen.append(f)
