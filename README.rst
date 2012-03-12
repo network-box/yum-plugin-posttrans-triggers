@@ -60,6 +60,33 @@ triggers:
 * ``/etc/yum/pluginconf.d/posttrans-triggers.conf`` file.
 
 
+Configuration syntax
+====================
+
+Each watcher file must be installed in the
+``/etc/yum/pluginconf.d/posttrans-triggers.conf.d`` folder and be named with
+the ``.conf`` extension.
+
+The syntax is very similar to the INI one::
+
+    [/path/to/watch]
+    exec=/path/to/command option1 option2
+
+Each file can have as much section as paths to watch.
+
+Paths are watched recursively.
+
+One can specify as many commands to execute as desired, simply by specifying
+more than one ``exec=`` line::
+
+    [/path/to/watch]
+    exec=/path/to/command option1 option2
+    exec=/path/to/anothercommand option3 option4
+
+Of course, several files can watch the same path, and specify different
+commands to be run.
+
+
 Legal
 =====
 
