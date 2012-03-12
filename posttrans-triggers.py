@@ -30,6 +30,23 @@ always_run_triggers = False
 triggers_configs_path = "/etc/yum/pluginconf.d/posttrans-triggers.conf.d"
 
 
+class TriggerSectionDict(dict):
+    def __setitem__(self, key, value):
+        """Allow multiple values to be specified for the same key.
+
+        This is useful for example so that different files can specify an
+        'exec' option for the same path. In such a case, we would want to
+        execute all commands on the trigger, not just the one in the file
+        we read last.
+        """
+        if self.has_key(key):
+            new_value = "\n".join([self[key], value])
+        else:
+            new_value = value
+
+        return super(TriggerSectionDict, self).__setitem__(key, new_value)
+
+
 def posttrans_hook(conduit):
     global always_run_triggers
 
@@ -41,7 +58,7 @@ def posttrans_hook(conduit):
 
     # Parse the trigger configs
     triggers_files = glob.glob(os.path.join(triggers_configs_path, "*.conf"))
-    triggers_config = RawConfigParser()
+    triggers_config = RawConfigParser(dict_type=TriggerSectionDict)
     triggers_config.read(triggers_files)
 
     for s in triggers_config.sections():
@@ -62,14 +79,15 @@ def posttrans_hook(conduit):
 
             for path in triggers_config.sections():
                 if f.startswith(path):
-                    cmd = triggers_config.get(path, "exec")
-                    triggers.add(shlex.split(cmd))
+                    t = triggers_config.get(path, "exec")
+                    triggers.add(t)
 
             files_seen.append(f)
 
-    for cmd in triggers:
-        proc = subprocess.Popen(cmd.split(), stdout=subprocess.NULL, stderr=subprocess.NULL)
-        proc.communicate()
+    for t in triggers:
+        for cmd in t.split("\n"):
+            proc = subprocess.Popen(shlex.split(cmd), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            out, err = proc.communicate()
 
 def config_hook(conduit):
     global always_run_triggers
