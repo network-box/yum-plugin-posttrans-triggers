@@ -53,8 +53,7 @@ def posttrans_hook(conduit):
     # Look at the files impacted by the transaction
     files_seen = []
     triggers = set()
-    ts = conduit.getTsInfo()
-    for tsmem in ts.getMembers():
+    for tsmem in conduit.getTsInfo().getMembers():
         pkg_files = tsmem.po.filelist
 
         for f in pkg_files:
