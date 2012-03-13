@@ -23,6 +23,9 @@ some trouble.
 This plugin allows packages to specify files to be watched, and an action to
 take after a transaction which saw those changed.
 
+Of course, each action will be executed only once, which means that in the
+above example, ``A.service`` will only be reloaded once.
+
 Install
 =======
 
@@ -85,6 +88,9 @@ more than one ``exec=`` line::
 
 Of course, several files can watch the same path, and specify different
 commands to be run.
+
+If several triggers are configured with an identical ``exec=`` string, the
+corresponding command will be executed only once.
 
 
 Legal
