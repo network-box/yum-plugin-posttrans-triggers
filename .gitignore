@@ -10,3 +10,9 @@ MANIFEST
 # -- Editors temp files ------------------------------------------------------
 *.swp
 *~
+
+# -- Result of rpmbuild for the test cases -----------------------------------
+tests/data/specs/BUILD
+tests/data/specs/BUILDROOT
+tests/data/specs/RPMS
+tests/data/specs/*.rpm
