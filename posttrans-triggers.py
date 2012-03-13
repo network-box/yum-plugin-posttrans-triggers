@@ -28,7 +28,7 @@ plugin_type = (TYPE_CORE,)
 always_run_triggers = False
 print_output = False
 
-triggers_configs_path = "/etc/yum/pluginconf.d/posttrans-triggers.conf.d"
+triggers_configs_path = "etc/yum/pluginconf.d/posttrans-triggers.conf.d"
 
 
 class TriggerSectionDict(dict):
@@ -60,7 +60,8 @@ def posttrans_hook(conduit):
     base = conduit._base
 
     # Parse the trigger configs
-    triggers_files = glob.glob(os.path.join(triggers_configs_path, "*.conf"))
+    triggers_files = glob.glob(os.path.join(base.conf.installroot,
+                                            triggers_configs_path, "*.conf"))
     triggers_config = RawConfigParser(dict_type=TriggerSectionDict)
     triggers_config.read(triggers_files)
 
