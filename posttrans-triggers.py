@@ -100,8 +100,12 @@ def posttrans_hook(conduit):
 
     for t in triggers:
         for cmd in t.split("\n"):
-            p = subprocess.Popen(shlex.split(cmd), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            out, err = p.communicate()
+            try:
+                p = subprocess.Popen(shlex.split(cmd), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            except Exception, e:
+                base.logger.error("posttrans-triggers: %s" % err)
+            else:
+                out, err = p.communicate()
 
             if output_desired:
                 base.logger.info("posttrans-triggers: %s" % out)
