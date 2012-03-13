@@ -7,3 +7,8 @@ class TestCase(unittest.TestCase):
 
     def tearDown(self):
         pass
+
+
+from .test_simple import *
+from .test_errors import *
+from .test_merging import *
