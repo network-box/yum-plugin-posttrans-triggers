@@ -80,7 +80,7 @@ def posttrans_hook(conduit):
                     try:
                         t = triggers_config.get(path, "exec")
                     except NoOptionError, e:
-                        base.logger.error("posttrans-triggers: Ignoring path" \
+                        base.verbose_logger.error("posttrans-triggers: Ignoring path" \
                                           " %s: no 'exec' option found" % path)
                         triggers_config.remove_section(path)
                         continue
@@ -120,9 +120,9 @@ def posttrans_hook(conduit):
             if output:
                 base.verbose_logger.info("posttrans-triggers: %s" % output)
             if error:
-                base.logger.error("posttrans-triggers: %s" % error)
+                base.verbose_logger.error("posttrans-triggers: %s" % error)
             if p.returncode != 0:
-                base.logger.error("posttrans-triggers: Failed to run " \
+                base.verbose_logger.error("posttrans-triggers: Failed to run " \
                                   "command (%s)" % cmd)
 
 def config_hook(conduit):
