@@ -100,13 +100,17 @@ def posttrans_hook(conduit):
 
     for t in triggers:
         for cmd in t.split("\n"):
-            proc = subprocess.Popen(shlex.split(cmd), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            out, err = proc.communicate()
+            p = subprocess.Popen(shlex.split(cmd), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            out, err = p.communicate()
 
             if output_desired:
                 base.logger.info("posttrans-triggers: %s" % out)
 
             base.logger.error("posttrans-triggers: %s" % err)
+
+            if p.returncode != 0:
+                base.logger.error("posttrans-triggers: Failed to run " \
+                                  "command (%s)" % cmd)
 
 def config_hook(conduit):
     global always_run_triggers, print_output
