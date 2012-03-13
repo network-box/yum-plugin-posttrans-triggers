@@ -1,1 +1,2 @@
 include *.conf *.txt
+recursive-include tests *.py

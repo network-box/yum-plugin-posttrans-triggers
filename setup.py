@@ -1,6 +1,9 @@
-from distutils.core import setup
+from distutils.core import setup, Command
 from distutils.command.install import install as _install
 import os
+import unittest
+import sys
+
 
 here = os.path.abspath(os.path.dirname(__file__))
 README = open(os.path.join(here, 'README.rst')).read()
@@ -27,6 +30,43 @@ class install(_install):
         self.mkpath(yumplugins_confroot, mode=755)
         self.copy_file('posttrans-triggers.conf', yumplugins_confroot)
 
+class test(Command):
+    """A custom distutils command to run unit tests."""
+    user_options = []
+
+    def initialize_options(self):
+        self._dir = os.getcwd()
+
+    def finalize_options(self):
+        pass
+
+    def run(self):
+        """Run all the unit tests found in the `tests/' folder."""
+        if os.getuid() != 0:
+            print("Unit tests must unfortunately be run as root")
+            sys.exit(1)
+
+        # FIXME: There has to be a way to run the unit tests against the
+        #        development tree
+        yumplugins_coderoot = "/usr/lib/yum-plugins/"
+        if not os.path.exists(os.path.join(yumplugins_coderoot,
+                                           "posttrans-triggers.py")):
+            print("Unit tests require the plugin to be installed")
+            sys.exit(1)
+
+        print("\nWarning:\n--------\n    Unit tests are run against the " \
+              "system-installed version of the plugin\n")
+        raw_input("    Press any key to continue...\n")
+
+        import tests
+
+        loader = unittest.TestLoader()
+        t = unittest.TextTestRunner(verbosity=self.verbose)
+        result = t.run(loader.loadTestsFromModule(tests))
+
+        if result.errors or result.failures:
+            sys.exit(1)
+
 
 setup(name='yum-plugin-posttrans-triggers',
         version='0.1',
@@ -52,6 +92,6 @@ setup(name='yum-plugin-posttrans-triggers',
             # "yum>=3.2.29", # Not tested with older releases (that means RHEL6)
             ],
         cmdclass={
-            'install': install,
+            'install': install, 'test': test,
             },
         )
