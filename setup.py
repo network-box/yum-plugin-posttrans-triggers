@@ -1,7 +1,6 @@
-import os
-
 from distutils.core import setup
 from distutils.command.install import install as _install
+import os
 
 here = os.path.abspath(os.path.dirname(__file__))
 README = open(os.path.join(here, 'README.rst')).read()
