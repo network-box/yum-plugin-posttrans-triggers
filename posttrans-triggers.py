@@ -61,12 +61,6 @@ def posttrans_hook(conduit):
     triggers_config = RawConfigParser(dict_type=TriggerSectionDict)
     triggers_config.read(triggers_files)
 
-    for s in triggers_config.sections():
-        if not triggers_config.has_option(s, "exec"):
-            conduit._base.logger.error("posttrans-triggers: Ignoring path %s:"\
-                                          " no 'exec' option found" % s)
-            triggers_config.remove_section(s)
-
     # Look at the files impacted by the transaction
     files_seen = []
     triggers = set()
@@ -79,7 +73,14 @@ def posttrans_hook(conduit):
 
             for path in triggers_config.sections():
                 if f.startswith(path):
-                    t = triggers_config.get(path, "exec")
+                    try:
+                        t = triggers_config.get(path, "exec")
+                    except NoOptionError, e:
+                        conduit._base.logger.error("posttrans-triggers: " \
+                                                   "Ignoring path %s: no "\
+                                                   "'exec' option found" % path)
+                        triggers_config.remove_section(path)
+                        continue
 
                     # Try to be helpful
                     env = {"file": f, "path": path}
