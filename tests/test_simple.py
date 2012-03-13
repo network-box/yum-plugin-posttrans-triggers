@@ -23,7 +23,13 @@ class TestSimple(TestCase):
 
     def test_triggers_two_paths_single_exec_each(self):
         """Test with 2 triggers on 2 different paths."""
-        raise NotImplementedError()
+        self._run_yum_test(["install", "foo", "bar"],
+                           ["posttrans-triggers: Got trigger on path " \
+                             "/usr/share/foo (file is " \
+                             "/usr/share/foo/some_resource)",
+                            "posttrans-triggers: Got trigger on path " \
+                             "/usr/share/bar (file is " \
+                             "/usr/share/bar/some_resource)"])
 
     def test_triggers_path_subpath_single_exec_each(self):
         """Test triggers on a path and a subpath of it."""
