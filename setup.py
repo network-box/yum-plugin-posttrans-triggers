@@ -7,6 +7,44 @@ here = os.path.abspath(os.path.dirname(__file__))
 README = open(os.path.join(here, 'README.rst')).read()
 
 
+class clean(Command):
+    """A custom distutils command to clean the development tree."""
+    user_options = []
+
+    def initialize_options(self):
+        self._dir = os.getcwd()
+
+    def finalize_options(self):
+        pass
+
+    def _clean_path(self, endswith, dirname, fnames):
+        for fname in fnames:
+            if fname.endswith(endswith):
+                path = os.path.join(dirname, fname)
+                if self.verbose > 1:
+                    print("cleaning %s" % os.path.relpath(path))
+                os.unlink(path)
+
+    def run(self):
+        import shutil
+
+        for path in ["build", "dist", "tests/data/specs/BUILD",
+                    "tests/data/specs/BUILDROOT", "tests/data/specs/RPMS"]:
+            if os.path.isdir(path):
+                if self.verbose > 1:
+                    print("cleaning %s" % path)
+                shutil.rmtree(path)
+
+        for path in ["MANIFEST"]:
+            if os.path.isfile(path):
+                if self.verbose > 1:
+                    print("cleaning %s" % path)
+                os.unlink(path)
+
+        os.path.walk("tests/data/specs", self._clean_path, ".rpm")
+        os.path.walk(".", self._clean_path, ".pyc")
+        os.path.walk(".", self._clean_path, ".pyo")
+
 class install(_install):
     """Specialized installer.
 
@@ -93,6 +131,6 @@ setup(name='yum-plugin-posttrans-triggers',
             # "yum>=3.2.29", # Not tested with older releases (that means RHEL6)
             ],
         cmdclass={
-            'install': install, 'test': test,
+            "clean": clean, 'install': install, 'test': test,
             },
         )
