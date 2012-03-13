@@ -1,8 +1,6 @@
 from distutils.core import setup, Command
 from distutils.command.install import install as _install
 import os
-import unittest
-import sys
 
 
 here = os.path.abspath(os.path.dirname(__file__))
@@ -42,6 +40,9 @@ class test(Command):
 
     def run(self):
         """Run all the unit tests found in the `tests/' folder."""
+        import sys
+        import unittest
+
         if os.getuid() != 0:
             print("Unit tests must unfortunately be run as root")
             sys.exit(1)
