@@ -33,4 +33,10 @@ class TestSimple(TestCase):
 
     def test_triggers_path_subpath_single_exec_each(self):
         """Test triggers on a path and a subpath of it."""
-        raise NotImplementedError()
+        self._run_yum_test(["install", "toto"],
+                           ["posttrans-triggers: Got trigger on path " \
+                             "/usr/share (file is " \
+                             "/usr/share/toto/some_resource)",
+                            "posttrans-triggers: Got trigger on path " \
+                             "/usr/share/toto (file is " \
+                             "/usr/share/toto/some_resource)"])
