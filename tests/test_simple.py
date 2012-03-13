@@ -16,7 +16,10 @@ class TestSimple(TestCase):
 
     def test_trigger_single_path_single_exec(self):
         """Test with a single trigger with a single command."""
-        raise NotImplementedError()
+        self._run_yum_test(["install", "foo"],
+                           ["posttrans-triggers: Got trigger on path " \
+                            "/usr/share/foo (file is " \
+                            "/usr/share/foo/some_resource)"])
 
     def test_triggers_two_paths_single_exec_each(self):
         """Test with 2 triggers on 2 different paths."""
