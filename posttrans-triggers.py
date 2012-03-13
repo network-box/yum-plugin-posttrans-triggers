@@ -118,7 +118,7 @@ def posttrans_hook(conduit):
                 output, error = p.communicate()
 
             if output:
-                base.logger.info("posttrans-triggers: %s" % output)
+                base.verbose_logger.info("posttrans-triggers: %s" % output)
             if error:
                 base.logger.error("posttrans-triggers: %s" % error)
             if p.returncode != 0:
