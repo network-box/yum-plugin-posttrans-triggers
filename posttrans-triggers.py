@@ -105,7 +105,8 @@ def posttrans_hook(conduit):
 
             if output_desired:
                 base.logger.info("posttrans-triggers: %s" % out)
-                base.logger.error("posttrans-triggers: %s" % err)
+
+            base.logger.error("posttrans-triggers: %s" % err)
 
 def config_hook(conduit):
     global always_run_triggers, print_output
