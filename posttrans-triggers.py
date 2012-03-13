@@ -57,6 +57,8 @@ def posttrans_hook(conduit):
     if not always_run_triggers and not (opts and opts.posttrans_triggers):
         return
 
+    base = conduit._base
+
     # Parse the trigger configs
     triggers_files = glob.glob(os.path.join(triggers_configs_path, "*.conf"))
     triggers_config = RawConfigParser(dict_type=TriggerSectionDict)
@@ -77,9 +79,8 @@ def posttrans_hook(conduit):
                     try:
                         t = triggers_config.get(path, "exec")
                     except NoOptionError, e:
-                        conduit._base.logger.error("posttrans-triggers: " \
-                                                   "Ignoring path %s: no "\
-                                                   "'exec' option found" % path)
+                        base.logger.error("posttrans-triggers: Ignoring path" \
+                                          " %s: no 'exec' option found" % path)
                         triggers_config.remove_section(path)
                         continue
 
@@ -103,8 +104,8 @@ def posttrans_hook(conduit):
             out, err = proc.communicate()
 
             if output_desired:
-                self.logger.info("posttrans-triggers: %s" % out)
-                self.logger.error("posttrans-triggers: %s" % err)
+                base.logger.info("posttrans-triggers: %s" % out)
+                base.logger.error("posttrans-triggers: %s" % err)
 
 def config_hook(conduit):
     global always_run_triggers, print_output
