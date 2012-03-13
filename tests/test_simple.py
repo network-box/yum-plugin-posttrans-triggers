@@ -4,7 +4,15 @@ from . import TestCase
 class TestSimple(TestCase):
     def test_noop(self):
         """Make sure we don't do anything if not explicitly enabled."""
-        raise NotImplementedError()
+        # Don't enable the plugin
+        arg = self.default_cmd.pop()
+        self.assertEqual(arg, "--posttrans-triggers")
+
+        self._run_yum_test(["install", "foo"],
+                           ["posttrans-triggers: Got trigger on path " \
+                            "/usr/share/foo (file is " \
+                            "/usr/share/foo/some_resource)"],
+                           check_in=False)
 
     def test_trigger_single_path_single_exec(self):
         """Test with a single trigger with a single command."""
