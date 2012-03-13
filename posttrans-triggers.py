@@ -14,7 +14,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from ConfigParser import RawConfigParser
+from ConfigParser import RawConfigParser, NoOptionError
 import glob
 import os
 import shlex
