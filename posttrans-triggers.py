@@ -26,6 +26,7 @@ requires_api_version = '2.6'
 plugin_type = (TYPE_CORE,)
 
 always_run_triggers = False
+print_output = False
 
 triggers_configs_path = "/etc/yum/pluginconf.d/posttrans-triggers.conf.d"
 
@@ -48,7 +49,7 @@ class TriggerSectionDict(dict):
 
 
 def posttrans_hook(conduit):
-    global always_run_triggers
+    global always_run_triggers, print_output
 
     opts, args = conduit.getCmdLine()
     conf = conduit.getConf()
@@ -90,14 +91,26 @@ def posttrans_hook(conduit):
 
             files_seen.append(f)
 
+    # Avoid evaluating that compound condition for each command of each trigger
+    if print_output or (opts and opts.print_output):
+        output_desired = True
+    else:
+        output_desired = False
+
     for t in triggers:
         for cmd in t.split("\n"):
             proc = subprocess.Popen(shlex.split(cmd), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             out, err = proc.communicate()
 
+            if output_desired:
+                self.logger.info("posttrans-triggers: %s" % out)
+                self.logger.error("posttrans-triggers: %s" % err)
+
 def config_hook(conduit):
-    global always_run_triggers
+    global always_run_triggers, print_output
+
     always_run_triggers = conduit.confBool('main', 'always_run_triggers', default=False)
+    print_output = conduit.confBool('main', 'print_output', default=False)
 
     parser = conduit.getOptParser()
     if parser:
@@ -107,3 +120,6 @@ def config_hook(conduit):
         parser.add_option('', '--posttrans-triggers', dest='posttrans_triggers',
                 action='store_true', default=False,
                 help="run the file triggers at the end of a a yum transaction")
+        parser.add_option('', '--posttrans-triggers-print-output', dest='print_output',
+                action='store_true', default=False,
+                help="print the output of the post-transaction file triggers to the console")
