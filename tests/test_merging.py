@@ -22,6 +22,12 @@ class TestMerging(TestCase):
         """Make sure we run all exec commands for a given path."""
         raise NotImplementedError()
 
-    def test_multiple_trigger_same_exec(self):
+    def test_multiple_triggers_same_exec(self):
         """Make sure we run a given trigger command only once."""
-        raise NotImplementedError()
+        expected_lines = ["posttrans-triggers: /bin/systemctl reload " \
+                           "trucmuche.service"]
+        output = self._run_yum_test(["install", "trucmuche", "mod_trucmuche"],
+                                    expected_lines)
+
+        for line in expected_lines:
+            self.assertEqual(output.count(line), 1)
