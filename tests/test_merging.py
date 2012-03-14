@@ -49,3 +49,16 @@ class TestMerging(TestCase):
 
         for line in expected_lines:
             self.assertEqual(output.count(line), 1)
+
+    def test_multiple_triggers_multiple_similar_exec(self):
+        """Make sure we run all exec commands for a given path, but only once."""
+        # Check that both exec commands are executed
+        expected_lines = ["posttrans-triggers: First trigger on " \
+                           "/usr/share/machin",
+                          "posttrans-triggers: Second trigger on " \
+                           "/usr/share/machin"]
+        output = self._run_yum_test(["install", "machin", "machins"],
+                                    expected_lines)
+
+        for line in expected_lines:
+            self.assertEqual(output.count(line), 1)
