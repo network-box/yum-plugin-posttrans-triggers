@@ -116,8 +116,10 @@ def posttrans_hook(conduit):
                    ])
         env["PATH"] = ""
 
+        split_cmd = shlex.split(cmd)
+
         try:
-            p = subprocess.Popen(shlex.split(cmd),
+            p = subprocess.Popen(split_cmd,
                                  stdout=poutput, stderr=perror, env=env)
 
         except OSError, e:
@@ -125,7 +127,7 @@ def posttrans_hook(conduit):
             if e.errno == 2:
                 # The executable wasn't found, most likely because the
                 # full path was not specified
-                error = "%s: %s" % (e.strerror, shlex.split(cmd)[0])
+                error = "%s: %s" % (e.strerror, split_cmd[0])
             else:
                 error = e
 
