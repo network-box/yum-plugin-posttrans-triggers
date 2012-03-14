@@ -40,3 +40,10 @@ class TestSimple(TestCase):
                             "posttrans-triggers: Got trigger on path " \
                              "/usr/share/toto (file is " \
                              "/usr/share/toto/some_resource)"])
+
+    def test_trigger_on_path_including_libarch(self):
+        """Test that %(libarch) is properly replaced in the path before matching."""
+        expected_lines = ["posttrans-triggers: Got trigger on path using libarch"]
+
+        self._run_yum_test(["install", "baz"],
+                           expected_lines)
