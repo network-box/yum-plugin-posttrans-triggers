@@ -1,4 +1,4 @@
-include *.conf *.txt
+include *.conf *.txt *.rst
 recursive-include tests *.py
 recursive-include tests/data/specs *.spec
 recursive-include tests/data/Test* *.xml *.rpm *.xml.gz
