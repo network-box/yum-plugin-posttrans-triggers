@@ -96,8 +96,8 @@ more than one ``exec=`` line::
 Of course, several files can watch the same path, and specify different
 commands to be run.
 
-If several triggers are configured with an identical ``exec=`` string, the
-corresponding command will be executed only once.
+If several triggers are configured with an *identical* ``exec=`` string, the
+corresponding command will be executed *only once*.
 
 
 Legal
