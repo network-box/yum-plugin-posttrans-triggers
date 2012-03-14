@@ -1,7 +1,3 @@
-* de-duplication:
-- perhaps compare the splitted commands instead of the strings?
-  this would avoid "echo foo" being considered different from "echo  foo"
-
 * path matching:
 - Right now, [/usr/share/trucmuche] will match both /usr/share/trucmuche/foo
   and /usr/share/trucmuche-modules

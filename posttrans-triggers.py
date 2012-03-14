@@ -90,8 +90,9 @@ def posttrans_hook(conduit):
                     t = t % vars
 
                     for cmd in t.split("\n"):
-                        if not cmd in triggers:
-                            triggers.append(cmd)
+                        split_cmd = shlex.split(cmd)
+                        if not split_cmd in triggers:
+                            triggers.append(split_cmd)
 
             files_seen.append(f)
 
@@ -101,7 +102,7 @@ def posttrans_hook(conduit):
     else:
         output_desired = False
 
-    for cmd in triggers:
+    for split_cmd in triggers:
         if output_desired:
             poutput = subprocess.PIPE
             perror = subprocess.STDOUT
@@ -115,8 +116,6 @@ def posttrans_hook(conduit):
                             or k == "LANG"
                    ])
         env["PATH"] = ""
-
-        split_cmd = shlex.split(cmd)
 
         try:
             p = subprocess.Popen(split_cmd,
@@ -138,8 +137,8 @@ def posttrans_hook(conduit):
         else:
             output, error = p.communicate()
             if p.returncode != 0:
-                base.verbose_logger.error("posttrans-triggers: Failed to " \
-                                          "run command (%s)" % cmd)
+                base.verbose_logger.error("posttrans-triggers: Failed to run" \
+                                          " command (%s)" % ' '.join(split_cmd))
 
         finally:
             if output:
