@@ -67,7 +67,7 @@ def posttrans_hook(conduit):
 
     # Look at the files impacted by the transaction
     files_seen = []
-    triggers = set()
+    triggers = []
     for tsmem in conduit.getTsInfo().getMembers():
         pkg_files = tsmem.po.filelist
 
@@ -89,7 +89,9 @@ def posttrans_hook(conduit):
                     vars = {"file": f, "path": path}
                     t = t % vars
 
-                    triggers.update(t.split("\n"))
+                    for cmd in t.split("\n"):
+                        if not cmd in triggers:
+                            triggers.append(cmd)
 
             files_seen.append(f)
 
