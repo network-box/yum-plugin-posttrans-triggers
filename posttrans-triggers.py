@@ -123,14 +123,14 @@ def posttrans_hook(conduit):
                 error = e
             else:
                 output, error = p.communicate()
-
-            if output:
-                base.verbose_logger.info("posttrans-triggers: %s" % output)
-            if error:
-                base.verbose_logger.error("posttrans-triggers: %s" % error)
-            if p.returncode != 0:
-                base.verbose_logger.error("posttrans-triggers: Failed to run " \
-                                  "command (%s)" % cmd)
+                if p.returncode != 0:
+                    base.verbose_logger.error("posttrans-triggers: Failed to " \
+                                              "run command (%s)" % cmd)
+            finally:
+                if output:
+                    base.verbose_logger.info("posttrans-triggers: %s" % output)
+                if error:
+                    base.verbose_logger.error("posttrans-triggers: %s" % error)
 
 def config_hook(conduit):
     global always_run_triggers, print_output
