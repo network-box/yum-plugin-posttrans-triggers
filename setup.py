@@ -21,8 +21,7 @@ class clean(Command):
         for fname in fnames:
             if fname.endswith(endswith):
                 path = os.path.join(dirname, fname)
-                if self.verbose > 1:
-                    print("cleaning %s" % os.path.relpath(path))
+                print("cleaning %s" % os.path.relpath(path))
                 os.unlink(path)
 
     def run(self):
@@ -31,14 +30,12 @@ class clean(Command):
         for path in ["build", "dist", "tests/data/specs/BUILD",
                     "tests/data/specs/BUILDROOT", "tests/data/specs/RPMS"]:
             if os.path.isdir(path):
-                if self.verbose > 1:
-                    print("cleaning %s" % path)
+                print("cleaning %s" % path)
                 shutil.rmtree(path)
 
         for path in ["MANIFEST"]:
             if os.path.isfile(path):
-                if self.verbose > 1:
-                    print("cleaning %s" % path)
+                print("cleaning %s" % path)
                 os.unlink(path)
 
         os.path.walk("tests/data/specs", self._clean_path, ".rpm")
