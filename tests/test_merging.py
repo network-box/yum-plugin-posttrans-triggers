@@ -4,7 +4,19 @@ from . import TestCase
 class TestMerging(TestCase):
     def test_multiple_triggers_same_path(self):
         """Make sure we run all triggers on the same path."""
-        raise NotImplementedError()
+        self._run_yum_test(["install", "foo", "foo-addons"],
+                           ["posttrans-triggers: Got trigger on path " \
+                             "/usr/share/foo (file is " \
+                             "/usr/share/foo/some_resource)",
+                            "posttrans-triggers: Got trigger on path " \
+                             "/usr/share/foo (file is " \
+                             "/usr/share/foo/some_other_resource)",
+                            "posttrans-triggers: Got addons trigger on path " \
+                             "/usr/share/foo (file is " \
+                             "/usr/share/foo/some_resource)",
+                            "posttrans-triggers: Got addons trigger on path " \
+                             "/usr/share/foo (file is " \
+                             "/usr/share/foo/some_other_resource)"])
 
     def test_single_trigger_multiple_exec(self):
         """Make sure we run all exec commands for a given path."""
