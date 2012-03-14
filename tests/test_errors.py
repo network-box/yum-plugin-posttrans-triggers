@@ -29,3 +29,16 @@ class TestErrors(TestCase):
                              "directory",
                             "posttrans-triggers: Failed to run command " \
                              "(/bin/ls /path/to/inexistent/file)"])
+
+    def test_exec_without_full_path(self):
+        """Make sure commands are not executed without their full path."""
+        expected_lines = ["posttrans-triggers: No such file or directory: " \
+                           "echo"]
+        unexpected_lines = ["Got trigger on path /usr/share/ouhlala (file is" \
+                             "/usr/share/ouhlala/some_resource)"]
+
+        output = self._run_yum_test(["install", "ouhlala"],
+                                    expected_lines)
+
+        for line in unexpected_lines:
+            self.assertFalse(line in output)
