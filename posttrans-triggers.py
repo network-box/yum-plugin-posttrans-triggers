@@ -89,7 +89,7 @@ def posttrans_hook(conduit):
                     vars = {"file": f, "path": path}
                     t = t % vars
 
-                    triggers.add(t)
+                    triggers.update(t.split("\n"))
 
             files_seen.append(f)
 
@@ -99,50 +99,49 @@ def posttrans_hook(conduit):
     else:
         output_desired = False
 
-    for t in triggers:
-        for cmd in t.split("\n"):
-            if output_desired:
-                poutput = subprocess.PIPE
-                perror = subprocess.STDOUT
+    for cmd in triggers:
+        if output_desired:
+            poutput = subprocess.PIPE
+            perror = subprocess.STDOUT
+        else:
+            poutput = open("/dev/null", "w")
+            perror = subprocess.PIPE
+
+        # Filter the environment passed to the subprocesses
+        env = dict([(k, v) for (k, v) in os.environ.items() \
+                            if k.startswith("LC_") \
+                            or k == "LANG"
+                   ])
+        env["PATH"] = ""
+
+        try:
+            p = subprocess.Popen(shlex.split(cmd),
+                                 stdout=poutput, stderr=perror, env=env)
+
+        except OSError, e:
+            output = None
+            if e.errno == 2:
+                # The executable wasn't found, most likely because the
+                # full path was not specified
+                error = "%s: %s" % (e.strerror, shlex.split(cmd)[0])
             else:
-                poutput = open("/dev/null", "w")
-                perror = subprocess.PIPE
-
-            # Filter the environment passed to the subprocesses
-            env = dict([(k, v) for (k, v) in os.environ.items() \
-                                if k.startswith("LC_") \
-                                or k == "LANG"
-                       ])
-            env["PATH"] = ""
-
-            try:
-                p = subprocess.Popen(shlex.split(cmd),
-                                     stdout=poutput, stderr=perror, env=env)
-
-            except OSError, e:
-                output = None
-                if e.errno == 2:
-                    # The executable wasn't found, most likely because the
-                    # full path was not specified
-                    error = "%s: %s" % (e.strerror, shlex.split(cmd)[0])
-                else:
-                    error = e
-
-            except Exception, e:
-                output = None
                 error = e
 
-            else:
-                output, error = p.communicate()
-                if p.returncode != 0:
-                    base.verbose_logger.error("posttrans-triggers: Failed to " \
-                                              "run command (%s)" % cmd)
+        except Exception, e:
+            output = None
+            error = e
 
-            finally:
-                if output:
-                    base.verbose_logger.info("posttrans-triggers: %s" % output)
-                if error:
-                    base.verbose_logger.error("posttrans-triggers: %s" % error)
+        else:
+            output, error = p.communicate()
+            if p.returncode != 0:
+                base.verbose_logger.error("posttrans-triggers: Failed to " \
+                                          "run command (%s)" % cmd)
+
+        finally:
+            if output:
+                base.verbose_logger.info("posttrans-triggers: %s" % output)
+            if error:
+                base.verbose_logger.error("posttrans-triggers: %s" % error)
 
 def config_hook(conduit):
     global always_run_triggers, print_output
