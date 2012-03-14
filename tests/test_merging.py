@@ -62,3 +62,14 @@ class TestMerging(TestCase):
 
         for line in expected_lines:
             self.assertEqual(output.count(line), 1)
+
+    def test_multiple_triggers_similar_exec(self):
+        """Make sure we try hard to run a given trigger command only once."""
+        expected_lines = ["posttrans-triggers: /bin/systemctl reload " \
+                           "trucmuche.service"]
+        output = self._run_yum_test(["install", "trucmuche",
+                                     "trucmuche-addons"],
+                                    expected_lines)
+
+        for line in expected_lines:
+            self.assertEqual(output.count(line), 1)
