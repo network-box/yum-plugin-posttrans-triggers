@@ -86,8 +86,8 @@ def posttrans_hook(conduit):
                         continue
 
                     # Try to be helpful
-                    env = {"file": f, "path": path}
-                    t = t % env
+                    vars = {"file": f, "path": path}
+                    t = t % vars
 
                     triggers.add(t)
 
