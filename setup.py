@@ -105,7 +105,7 @@ class test(Command):
 
 
 setup(name='yum-plugin-posttrans-triggers',
-        version='0.1',
+        version='1.0',
         description='Run some file triggers after a yum transaction',
         long_description=README,
         classifiers=[
