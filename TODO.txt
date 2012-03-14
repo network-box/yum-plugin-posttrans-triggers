@@ -9,3 +9,7 @@
   and /usr/share/trucmuche-modules
   Do we want to enforce that the watched path be a real folder? Or is the
   current behavior what we want?
+
+* triggers ordering
+- Perhaps we could introduce a mechanism of priorities, to control the order
+  in which triggers are executed?
