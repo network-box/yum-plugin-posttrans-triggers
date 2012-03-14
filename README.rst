@@ -115,6 +115,17 @@ command contains only the ``LC_*`` and ``LANG`` variables.
 As a consequence, the ``exec=`` command must be specified with its full path,
 since the ``PATH`` variable is removed from its environment before execution.
 
+To implement the example cited in the preamble, the ``httpd`` package would
+provide the ``/etc/yum/pluginconf.d/posttrans-triggers.conf.d/httpd.conf`` file
+with the following content::
+
+    [/usr/%(libarch)/httpd/modules/]
+    exec=/bin/systemctl reload httpd.service
+
+Then every time a package like ``mod_perl``, containing an Apache module, gets
+installed, updated or removed, the Apache server would reload all its modules
+to take the change into account automatically.
+
 
 Legal
 =====
