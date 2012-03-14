@@ -9,22 +9,23 @@ of a transaction, and **only once**.
 
 Consider the following case:
 
-* the package ``A`` provides the service ``A.service``
-* the packages ``B`` and ``C`` provide resources for this service
+* the package ``httpd`` provides the service ``httpd.service``
+* the packages ``mod_perl`` and ``mod_ssl`` provide resources for this service
 
-When ``B`` or ``C`` are installed/updated/removed, ``A.service`` should be
-reloaded. This could be effectively done in ``%postun``, as is advised in the
-Fedora packaging guidelines.
+When ``mod_perl`` or ``mod_ssl`` are installed/updated/removed,
+``httpd.service`` should be reloaded. This could be effectively done in
+``%postun`` of each package.
 
-However, if both ``B`` and ``C`` are changed in the same transaction, then
-``A.service`` will be reloaded twice in a very short time, which might cause
-some trouble.
+However, if both ``mod_perl`` and ``mod_ssl`` are changed in the same
+transaction, then ``httpd.service`` will be reloaded twice in a very short
+time, which might cause some trouble. Even if it doesn't, it is inefficient.
 
-This plugin allows packages to specify files to be watched, and an action to
-take after a transaction which saw those changed.
+This plugin allows packages to specify paths to be watched, and actions to
+take after a transaction during which files matching those paths were changed.
 
 Of course, each action will be executed only once, which means that in the
-above example, ``A.service`` will only be reloaded once.
+above example, ``httpd.service`` will only be reloaded once.
+
 
 Install
 =======
