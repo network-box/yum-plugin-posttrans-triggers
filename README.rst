@@ -46,11 +46,6 @@ command, as root::
 
     # python setup.py install
 
-As for any Python module using Distutils, you can optionally specify the
-installation root::
-
-    # python setup.py install --root=/my/own/root
-
 Hopefully, this plugin is already packaged in your favorite distribution, so
 you can just run::
 
