@@ -77,7 +77,14 @@ The syntax is very similar to the INI one::
 
 Each file can have as much section as paths to watch.
 
-Paths are watched recursively.
+Paths are watched recursively, and the section is in fact the *beginning* of
+the path to watch. That means that the following paths will be matched by the
+above example section:
+
+    * ``/path/to/watch``
+    * ``/path/to/watch/subfolder/file``
+    * ``/path/to/watched/file``
+    * ``/path/to/watch-anything/here/really``
 
 One can specify as many commands to execute as desired, simply by specifying
 more than one ``exec=`` line::
