@@ -33,7 +33,13 @@ Install
 To use this YUM plugin, you need:
 
     - a RPM-managed operating system
-    - YUM >= 3.2.29 (this is the version of RHEL 6)
+    - YUM == 3.2.29
+          This is the version on RHEL 6, but it will probably work with other
+          versions too, e.g on Fedora. I've simply never tested those, feedback
+          is warmly welcome.
+    - Python == 2.6
+          Again, this is the version on RHEL 6, but it would probably work with
+          other versions. Let me know if you try it.
 
 Installing this plugin from the sources should be as simple as running one
 command, as root::
