@@ -69,6 +69,8 @@ class TestCase(unittest.TestCase):
             assert_method(line in result,
                           msg=(fail_msg % (line, "\n    ".join(result))))
 
+        return result
+
 
 from .test_simple import *
 from .test_errors import *
