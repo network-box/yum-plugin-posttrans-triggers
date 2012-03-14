@@ -98,8 +98,15 @@ more than one ``exec=`` line::
 Of course, several files can watch the same path, and specify different
 commands to be run.
 
-If several triggers are configured with an *identical* ``exec=`` string, the
-corresponding command will be executed *only once*.
+If several triggers are configured with identical ``exec=`` commands, it
+will be executed *only once*. As an example, the following commands are all
+considered identical, since a shell would parse them all the same way::
+
+    exec= /bin/systemctl reload httpd.service
+    exec=/bin/systemctl  reload httpd.service
+    exec=/bin/systemctl reload  httpd.service
+    exec=/bin/systemctl reload 'httpd.service'
+    exec=/bin/systemctl reload "httpd.service"
 
 The commands are executed in a minimal environment, not the full environment of
 the parent process (``yum``). At the moment, the environment passed to each
