@@ -69,6 +69,12 @@ def posttrans_hook(conduit):
     files_seen = []
     triggers = []
     for tsmem in conduit.getTsInfo().getMembers():
+        # Watched path might be in /usr/lib{,64}
+        if base.arch.basearch == "x86_64":
+            libarch = "lib64"
+        else:
+            libarch = "lib"
+
         pkg_files = tsmem.po.filelist
 
         for f in pkg_files:
@@ -76,7 +82,8 @@ def posttrans_hook(conduit):
                 continue
 
             for path in triggers_config.sections():
-                if f.startswith(path):
+                libarched_path = path % {"libarch": libarch}
+                if f.startswith(libarched_path):
                     try:
                         t = triggers_config.get(path, "exec")
                     except NoOptionError, e:
@@ -86,7 +93,7 @@ def posttrans_hook(conduit):
                         continue
 
                     # Try to be helpful
-                    vars = {"file": f, "path": path}
+                    vars = {"file": f, "path": libarched_path, "libarch": libarch}
                     t = t % vars
 
                     for cmd in t.split("\n"):
