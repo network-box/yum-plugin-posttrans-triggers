@@ -7,16 +7,16 @@ RPM transaction, such as %post, %postun, %posttrans, etc...
 One thing missing though, is the possibility to run some commands at the end
 of a transaction, and **only once**.
 
-Consider the following case:
+Consider the following example:
 
 * the package ``httpd`` provides the service ``httpd.service``
 * the packages ``mod_perl`` and ``mod_ssl`` provide resources for this service
 
-When ``mod_perl`` or ``mod_ssl`` are installed/updated/removed,
-``httpd.service`` should be reloaded. This could be effectively done in
-``%postun`` of each package.
+When the ``mod_perl`` or ``mod_ssl`` modules are installed, updated or removed,
+the service ``httpd.service`` should be reloaded. This could be effectively
+done in the ``%postun`` or ``%posttrans`` scriplet of each package.
 
-However, if both ``mod_perl`` and ``mod_ssl`` are changed in the same
+However, if both ``mod_perl`` and ``mod_ssl`` are present in the same
 transaction, then ``httpd.service`` will be reloaded twice in a very short
 time, which might cause some trouble. Even if it doesn't, it is inefficient.
 
@@ -26,6 +26,8 @@ take after a transaction during which files matching those paths were changed.
 Of course, each action will be executed only once, which means that in the
 above example, ``httpd.service`` will only be reloaded once.
 
+In essence, this plugin implements what ``%posttrans`` should really be.
+
 
 Install
 =======
@@ -34,11 +36,11 @@ To use this YUM plugin, you need:
 
     - a RPM-managed operating system
     - YUM == 3.2.29
-          This is the version on RHEL 6, but it will probably work with other
+          This is the version on EL 6, but it will probably work with other
           versions too, e.g on Fedora. I've simply never tested those, feedback
           is warmly welcome.
     - Python == 2.6
-          Again, this is the version on RHEL 6, but it would probably work with
+          Again, this is the version on EL 6, but it would probably work with
           other versions. Let me know if you try it.
 
 Installing this plugin from the sources should be as simple as running one
