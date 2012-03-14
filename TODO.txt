@@ -3,3 +3,9 @@
   this would avoid "echo foo" being considered different from "echo  foo"
 - enforce full path to executables?
   this would avoid "echo foo" being considered different from "/bin/echo foo"
+
+* path matching:
+- Right now, [/usr/share/trucmuche] will match both /usr/share/trucmuche/foo
+  and /usr/share/trucmuche-modules
+  Do we want to enforce that the watched path be a real folder? Or is the
+  current behavior what we want?
