@@ -101,6 +101,13 @@ commands to be run.
 If several triggers are configured with an *identical* ``exec=`` string, the
 corresponding command will be executed *only once*.
 
+The commands are executed in a minimal environment, not the full environment of
+the parent process (``yum``). At the moment, the environment passed to each
+command contains only the ``LC_*`` and ``LANG`` variables.
+
+As a consequence, the ``exec=`` command must be specified with its full path,
+since the ``PATH`` variable is removed from its environment before execution.
+
 
 Legal
 =====

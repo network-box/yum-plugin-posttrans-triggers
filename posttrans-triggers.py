@@ -108,9 +108,16 @@ def posttrans_hook(conduit):
                 poutput = open("/dev/null", "w")
                 perror = subprocess.PIPE
 
+            # Filter the environment passed to the subprocesses
+            env = dict([(k, v) for (k, v) in os.environ.items() \
+                                if k.startswith("LC_") \
+                                or k == "LANG"
+                       ])
+            env["PATH"] = ""
+
             try:
-                p = subprocess.Popen(shlex.split(cmd), stdout=poutput,
-                                                       stderr=perror)
+                p = subprocess.Popen(shlex.split(cmd),
+                                     stdout=poutput, stderr=perror, env=env)
             except Exception, e:
                 output = None
                 error = e
