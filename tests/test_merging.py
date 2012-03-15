@@ -4,19 +4,20 @@ from . import TestCase
 class TestMerging(TestCase):
     def test_multiple_triggers_same_path(self):
         """Make sure we run all triggers on the same path."""
+        expected_lines = ["posttrans-triggers: Got trigger on path " \
+                            "/usr/share/foo (file is " \
+                            "/usr/share/foo/some_resource)",
+                          "posttrans-triggers: Got trigger on path " \
+                            "/usr/share/foo (file is " \
+                            "/usr/share/foo/some_other_resource)",
+                          "posttrans-triggers: Got addons trigger on path " \
+                            "/usr/share/foo (file is " \
+                            "/usr/share/foo/some_resource)",
+                          "posttrans-triggers: Got addons trigger on path " \
+                            "/usr/share/foo (file is " \
+                            "/usr/share/foo/some_other_resource)"]
         self._run_yum_test(["install", "foo", "foo-addons"],
-                           ["posttrans-triggers: Got trigger on path " \
-                             "/usr/share/foo (file is " \
-                             "/usr/share/foo/some_resource)",
-                            "posttrans-triggers: Got trigger on path " \
-                             "/usr/share/foo (file is " \
-                             "/usr/share/foo/some_other_resource)",
-                            "posttrans-triggers: Got addons trigger on path " \
-                             "/usr/share/foo (file is " \
-                             "/usr/share/foo/some_resource)",
-                            "posttrans-triggers: Got addons trigger on path " \
-                             "/usr/share/foo (file is " \
-                             "/usr/share/foo/some_other_resource)"])
+                           expected=expected_lines)
 
     def test_single_trigger_multiple_exec(self):
         """Make sure we run all exec commands for a given path."""
@@ -26,7 +27,7 @@ class TestMerging(TestCase):
                           "posttrans-triggers: Second trigger on " \
                            "/usr/share/machin"]
         output = self._run_yum_test(["install", "machin"],
-                                    expected_lines)
+                                    expected=expected_lines)
 
         # Check the order in which they are executed
         def test_ordered_presence(lst1, lst2):
@@ -45,7 +46,7 @@ class TestMerging(TestCase):
         expected_lines = ["posttrans-triggers: /bin/systemctl reload " \
                            "trucmuche.service"]
         output = self._run_yum_test(["install", "trucmuche", "mod_trucmuche"],
-                                    expected_lines)
+                                    expected=expected_lines)
 
         for line in expected_lines:
             self.assertEqual(output.count(line), 1)
@@ -58,7 +59,7 @@ class TestMerging(TestCase):
                           "posttrans-triggers: Second trigger on " \
                            "/usr/share/machin"]
         output = self._run_yum_test(["install", "machin", "machins"],
-                                    expected_lines)
+                                    expected=expected_lines)
 
         for line in expected_lines:
             self.assertEqual(output.count(line), 1)
@@ -69,7 +70,7 @@ class TestMerging(TestCase):
                            "trucmuche.service"]
         output = self._run_yum_test(["install", "trucmuche",
                                      "trucmuche-addons"],
-                                    expected_lines)
+                                    expected=expected_lines)
 
         for line in expected_lines:
             self.assertEqual(output.count(line), 1)

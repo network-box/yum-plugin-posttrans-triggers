@@ -4,18 +4,18 @@ from . import TestCase
 class TestErrors(TestCase):
     def test_ignore_noexec(self):
         """Make sure we ignore triggers without an exec clause."""
-        self._run_yum_test(["install", "plouf"],
-                           ["posttrans-triggers: Ignoring path " \
-                            "/usr/share/plouf: no 'exec' option found"])
+        expected_lines = ["posttrans-triggers: Ignoring path " \
+                            "/usr/share/plouf: no 'exec' option found"]
+        self._run_yum_test(["install", "plouf"], expected=expected_lines)
 
     def test_trigger_exec_errors_out(self):
         """Make sure we print errors in triggered commands."""
-        self._run_yum_test(["install", "bidule"],
-                           ["posttrans-triggers: /bin/ls: cannot access " \
-                             "/path/to/inexistent/file: No such file or " \
-                             "directory",
-                            "posttrans-triggers: Failed to run command " \
-                             "(/bin/ls /path/to/inexistent/file)"])
+        expected_lines = ["posttrans-triggers: /bin/ls: cannot access " \
+                            "/path/to/inexistent/file: No such file or " \
+                            "directory",
+                          "posttrans-triggers: Failed to run command " \
+                            "(/bin/ls /path/to/inexistent/file)"]
+        self._run_yum_test(["install", "bidule"], expected=expected_lines)
 
     def test_trigger_exec_errors_out_at_all_times(self):
         """Make sure we print errors in triggered commands no matter what."""
@@ -23,12 +23,12 @@ class TestErrors(TestCase):
         self.default_cmd.remove("--posttrans-triggers-print-output")
         self.assertFalse("--posttrans-triggers-print-output" in self.default_cmd)
 
-        self._run_yum_test(["install", "bidule"],
-                           ["posttrans-triggers: /bin/ls: cannot access " \
-                             "/path/to/inexistent/file: No such file or " \
-                             "directory",
-                            "posttrans-triggers: Failed to run command " \
-                             "(/bin/ls /path/to/inexistent/file)"])
+        expected_lines = ["posttrans-triggers: /bin/ls: cannot access " \
+                            "/path/to/inexistent/file: No such file or " \
+                            "directory",
+                          "posttrans-triggers: Failed to run command " \
+                            "(/bin/ls /path/to/inexistent/file)"]
+        self._run_yum_test(["install", "bidule"], expected=expected_lines)
 
     def test_exec_without_full_path(self):
         """Make sure commands are not executed without their full path."""
@@ -37,8 +37,5 @@ class TestErrors(TestCase):
         unexpected_lines = ["Got trigger on path /usr/share/ouhlala (file is" \
                              "/usr/share/ouhlala/some_resource)"]
 
-        output = self._run_yum_test(["install", "ouhlala"],
-                                    expected_lines)
-
-        for line in unexpected_lines:
-            self.assertFalse(line in output)
+        self._run_yum_test(["install", "ouhlala"], expected=expected_lines,
+                           unexpected=unexpected_lines)

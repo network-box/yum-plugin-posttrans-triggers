@@ -51,14 +51,14 @@ class TestCase(unittest.TestCase):
                ]
         subprocess.check_call(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
-    def _run_yum_test(self, args, expected, check_in=True):
+    def _run_yum_test(self, args, expected=None, unexpected=None):
         """This is not a test method, just a helper to avoid duplication."""
-        if check_in:
-            assert_method = self.assertTrue
-            fail_msg = "Expected line:\n    %s\nIs not in the output:\n    %s"
-        else:
-            assert_method = self.assertFalse
-            fail_msg = "Unexpected line:\n    %s\nIs in the output:\n    %s"
+        if expected is None:
+            expected = []
+        if unexpected is None:
+            unexpected = []
+
+        fail_msg = "%s line:\n    %s\nIs %sin the output:\n    %s"
 
         cmd = self.default_cmd + args
         proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
@@ -66,8 +66,13 @@ class TestCase(unittest.TestCase):
         result = stdout.split("\n")
 
         for line in expected:
-            assert_method(line in result,
-                          msg=(fail_msg % (line, "\n    ".join(result))))
+            self.assertTrue(line in result,
+                            msg=(fail_msg % ("Expected", line, "not ",
+                                             "\n    ".join(result))))
+        for line in unexpected:
+            self.assertTrue(line not in result,
+                            msg=(fail_msg % ("Unexpected", line, "",
+                                             "\n    ".join(result))))
 
         return result
 
