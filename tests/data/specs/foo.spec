@@ -1,5 +1,5 @@
 Name:    foo
-Version: 1
+Version: 2
 Release: 1
 Summary: Just foo! 
 
@@ -19,8 +19,8 @@ Just foo!
 
 
 %install
-install -d %{buildroot}%{_datadir}/%{name}/
-cat >> %{buildroot}%{_datadir}/%{name}/some_resource << EOF
+install -d %{buildroot}%{_datadir}/%{name}-%{version}/
+cat >> %{buildroot}%{_datadir}/%{name}-%{version}/some_resource << EOF
 # Imagine there's actually something here...
 #
 # Something that might warrant reloading a service or whatever.
@@ -28,16 +28,22 @@ EOF
 
 install -d %{buildroot}%{_sysconfdir}/yum/pluginconf.d/posttrans-triggers.conf.d
 cat >> %{buildroot}%{_sysconfdir}/yum/pluginconf.d/posttrans-triggers.conf.d/%{name}.conf << EOF
-[%{_datadir}/%{name}]
-exec=/bin/echo 'Got trigger on path %%(path)s (file is %%(file)s)'
+[%{_datadir}/%{name}/]
+exec=/bin/echo 'Got trigger on old path %%(path)s (file is %%(file)s)'
+
+[%{_datadir}/%{name}-%{version}/]
+exec=/bin/echo 'Got trigger on new path %%(path)s (file is %%(file)s)'
 EOF
 
 
 %files
-%{_datadir}/%{name}/some_resource
+%{_datadir}/%{name}-%{version}/some_resource
 %{_sysconfdir}/yum/pluginconf.d/posttrans-triggers.conf.d/%{name}.conf
 
 
 %changelog
+* Thu Mar 15 2012 Mathieu Bridon <bochecha@fedoraproject.org> - 2-1
+- This is an update.
+
 * Tue Mar 13 2012 Mathieu Bridon <bochecha@fedoraproject.org> - 1-1
 - Initial package.
