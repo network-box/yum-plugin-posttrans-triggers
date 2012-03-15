@@ -18,8 +18,8 @@ class TestCase(unittest.TestCase):
         self.cachedir = os.path.join(self.dataroot,
                                      "%s.cache" % self._testMethodName)
 
-        testrepo_baseurl = os.path.join(self.dataroot,
-                                        "%s.repo" % self._testMethodName)
+        self.testrepo_baseurl = os.path.join(self.dataroot,
+                                             "%s.repo" % self._testMethodName)
 
         self.default_cmd = ["/usr/bin/yum", "-y", "-c", self.yumconf,
                             "--posttrans-triggers-print-output",
@@ -39,7 +39,7 @@ class TestCase(unittest.TestCase):
                 output.write("[test]\n")
                 output.write("name=Test repo\n")
                 output.write("enabled=1\n")
-                output.write("baseurl=file://%s\n" % testrepo_baseurl)
+                output.write("baseurl=file://%s\n" % self.testrepo_baseurl)
                 output.write("gpgcheck=0\n")
 
     def tearDown(self):
