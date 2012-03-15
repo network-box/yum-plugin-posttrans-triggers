@@ -75,7 +75,24 @@ def posttrans_hook(conduit):
         else:
             libarch = "lib"
 
-        pkg_files = tsmem.po.filelist
+        pkg = tsmem.po
+        try:
+            pkg_files = pkg.filelist
+        except Exception, e:
+            # We "sometimes" get the follwoing exception running the above:
+            #    yum.Errors.PackageSackError('Rpmdb changed underneath us')
+            #
+            # This seems to happen when the following conditions are met:
+            # - the package is removed or obsoleted during the transaction
+            # - the package was set as 'installonly' in the Yum configuration
+            #
+            # There might be other cases where this happens, but anyway, it
+            # seems like a good idea to try getting the files list from the
+            # local RPM DB (fast), and when that fails for whatever reason,
+            # get if from the repos over the network (slow).
+            pkg_files = base.pkgSack.searchNevra(pkg.name, pkg.epoch,
+                                                 pkg.version, pkg.release,
+                                                 pkg.arch)[0].filelist
 
         for f in pkg_files:
             if f in files_seen:
