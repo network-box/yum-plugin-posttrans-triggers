@@ -56,12 +56,14 @@ class install(_install):
         # Install the plugin code
         yumplugins_coderoot = os.path.join(self.root, "usr/lib/yum-plugins/")
         self.mkpath(yumplugins_coderoot, mode=755)
-        self.copy_file('posttrans-triggers.py', yumplugins_coderoot)
+        self.copy_file("posttrans-triggers.py", yumplugins_coderoot,
+                       preserve_mode=0)
 
         # Install the plugin conf
         yumplugins_confroot = os.path.join(self.root, "etc/yum/pluginconf.d/")
         self.mkpath(yumplugins_confroot, mode=755)
-        self.copy_file('posttrans-triggers.conf', yumplugins_confroot)
+        self.copy_file("posttrans-triggers.conf", yumplugins_confroot,
+                       preserve_mode=0)
 
         # Install the triggers dir
         self.mkpath(os.path.join(yumplugins_confroot,
