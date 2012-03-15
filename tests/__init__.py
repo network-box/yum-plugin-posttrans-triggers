@@ -80,3 +80,4 @@ class TestCase(unittest.TestCase):
 from .test_simple import *
 from .test_errors import *
 from .test_merging import *
+from .test_multi_steps import *
