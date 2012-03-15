@@ -63,6 +63,11 @@ class install(_install):
         self.mkpath(yumplugins_confroot, mode=755)
         self.copy_file('posttrans-triggers.conf', yumplugins_confroot)
 
+        # Install the triggers dir
+        self.mkpath(os.path.join(yumplugins_confroot,
+                                 "posttrans-triggers.conf.d"),
+                    mode=755)
+
 class test(Command):
     """A custom distutils command to run unit tests."""
     user_options = []
