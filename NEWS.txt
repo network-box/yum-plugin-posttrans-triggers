@@ -1,5 +1,18 @@
 Post-transaction triggers for Yum
 
+CHANGES WITH 1.2:
+  * This is a minor release with only one fix for an important issue.
+
+  * When the file list for a package can't be obtained from the RPM
+    database, we now check the repositories metadata. A unit test was
+    written to check this works.
+
+  * Three unit tests were added to check updtes, obsoletions and
+    removals.
+
+  * Some refactoring happened in the unit tests, so that new ones are
+    easier to write.
+
 CHANGES WITH 1.1:
   * This is a minor release which only fixes some installation issues
     I uncovered when trying to package the 1.0 release.
