@@ -44,3 +44,29 @@ class TestMultiSteps(TestCase):
                            "/usr/share/foo-2/some_resource)"]
         self._run_yum_test(["update"], expected=expected_lines,
                            unexpected=unexpected_lines)
+
+    def test_trigger_after_removal(self):
+        """Test that we don't fail on now removed packages."""
+        # First install two packages providing different triggers on the same
+        # path (this is from TestMerging.test_multiple_triggers_same_path()
+        expected_lines = ["posttrans-triggers: Got trigger on path " \
+                            "/usr/share/foo (file is " \
+                            "/usr/share/foo/some_resource)",
+                          "posttrans-triggers: Got trigger on path " \
+                            "/usr/share/foo (file is " \
+                            "/usr/share/foo/some_other_resource)",
+                          "posttrans-triggers: Got addons trigger on path " \
+                            "/usr/share/foo (file is " \
+                            "/usr/share/foo/some_resource)",
+                          "posttrans-triggers: Got addons trigger on path " \
+                            "/usr/share/foo (file is " \
+                            "/usr/share/foo/some_other_resource)"]
+        self._run_yum_test(["install", "foo", "foo-addons"],
+                           expected=expected_lines)
+
+        # Now comes the actual test: remove 'foo-addons', and observe the
+        # trigger from 'foo' being run for the removed files in 'foo-addons'
+        expected_lines = ["posttrans-triggers: Got trigger on path " \
+                            "/usr/share/foo (file is " \
+                            "/usr/share/foo/some_other_resource)"]
+        self._run_yum_test(["remove", "foo-addons"], expected=expected_lines)
