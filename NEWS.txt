@@ -1,0 +1,15 @@
+Post-transaction triggers for Yum
+
+CHANGES WITH 1.1:
+  * This is a minor release which only fixes some installation issues
+    I uncovered when trying to package the 1.0 release.
+
+  * The triggers folder now gets installed.
+
+  * The code and configuration files now get installed with the
+    appropriate modes.
+
+INITIAL 1.0 RELEASE:
+  * This is the very first release, considered stable and with the
+    base feature set we wanted. See the README.rst file for more
+    informations.
