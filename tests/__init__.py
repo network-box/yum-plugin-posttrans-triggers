@@ -15,9 +15,6 @@ class TestCase(unittest.TestCase):
                                     "%s.conf" % self._testMethodName)
         self.installroot = os.path.join(self.dataroot,
                                         "%s.root" % self._testMethodName)
-        self.cachedir = os.path.join(self.dataroot,
-                                     "%s.cache" % self._testMethodName)
-
         self.testrepo_baseurl = os.path.join(self.dataroot,
                                              "%s.repo" % self._testMethodName)
 
@@ -29,10 +26,7 @@ class TestCase(unittest.TestCase):
         with open(conf_template, "r") as input:
             with open(self.yumconf, "w") as output:
                 for line in input.readlines():
-                    if line.startswith("cachedir="):
-                        output.write("cachedir=%s\n" % self.cachedir)
-                    else:
-                        output.write(line)
+                    output.write(line)
 
                 output.write("installroot=%s\n" % self.installroot)
                 output.write("\n")
@@ -46,8 +40,7 @@ class TestCase(unittest.TestCase):
         cmd = ["/usr/bin/yum", "-c", self.yumconf, "clean", "all"]
         subprocess.check_call(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
-        # -- Cleanup, with super user permissions ------------------
-        cmd = ["/bin/rm", "-fr", self.yumconf, self.installroot, self.cachedir,
+        cmd = ["/bin/rm", "-fr", self.yumconf, self.installroot,
                ]
         subprocess.check_call(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
