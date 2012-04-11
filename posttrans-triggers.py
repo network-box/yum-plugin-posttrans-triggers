@@ -76,23 +76,33 @@ def posttrans_hook(conduit):
             libarch = "lib"
 
         pkg = tsmem.po
+
+        # We simply can't get the file list directly from the package object.
+        #
+        # In some cases, the object represents an installed package... which
+        # has just been removed during the transaction. In other cases, it
+        # represents an available package which was just installed.
+        #
+        # Some cases lead to the exception path almost all the time, some are
+        # not optimised (e.g hitting the network when the package is
+        # installed), so let's do things the hard way (for the programmer), but
+        # properly.
         try:
-            pkg_files = pkg.filelist
+            # Check the local RPM DB, faster
+            pkg_files = base.rpmdb.searchNevra(pkg.name, pkg.epoch,
+                                               pkg.version, pkg.release,
+                                               pkg.arch)[0].filelist
         except Exception as e:
-            # We "sometimes" get the follwoing exception running the above:
-            #    yum.Errors.PackageSackError('Rpmdb changed underneath us')
-            #
-            # This seems to happen when the following conditions are met:
-            # - the package is removed or obsoleted during the transaction
-            # - the package was set as 'installonly' in the Yum configuration
-            #
-            # There might be other cases where this happens, but anyway, it
-            # seems like a good idea to try getting the files list from the
-            # local RPM DB (fast), and when that fails for whatever reason,
-            # get if from the repos over the network (slow).
-            pkg_files = base.pkgSack.searchNevra(pkg.name, pkg.epoch,
-                                                 pkg.version, pkg.release,
-                                                 pkg.arch)[0].filelist
+            # If that fails, try with the repo metadata
+            try:
+                pkg_files = base.pkgSack.searchNevra(pkg.name, pkg.epoch,
+                                                     pkg.version, pkg.release,
+                                                     pkg.arch)[0].filelist
+            except Exception as e:
+                # If that still fails, log the error and give up
+                base.verbose_logger.error("posttrans-triggers: Could not get" \
+                                          " the file list for %s" % pkg.name)
+                continue
 
         for f in pkg_files:
             if f in files_seen:
