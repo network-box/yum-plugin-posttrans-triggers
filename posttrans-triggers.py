@@ -69,12 +69,6 @@ def posttrans_hook(conduit):
     files_seen = []
     triggers = []
     for tsmem in conduit.getTsInfo().getMembers():
-        # Watched path might be in /usr/lib{,64}
-        if base.arch.basearch == "x86_64":
-            libarch = "lib64"
-        else:
-            libarch = "lib"
-
         pkg = tsmem.po
 
         # We simply can't get the file list directly from the package object.
@@ -103,6 +97,12 @@ def posttrans_hook(conduit):
                 base.verbose_logger.error("posttrans-triggers: Could not get" \
                                           " the file list for %s" % pkg.name)
                 continue
+
+        # Watched path might be in /usr/lib{,64}
+        if base.arch.basearch == "x86_64":
+            libarch = "lib64"
+        else:
+            libarch = "lib"
 
         for f in pkg_files:
             if f in files_seen:
