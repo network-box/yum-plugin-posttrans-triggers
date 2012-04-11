@@ -78,7 +78,7 @@ def posttrans_hook(conduit):
         pkg = tsmem.po
         try:
             pkg_files = pkg.filelist
-        except Exception, e:
+        except Exception as e:
             # We "sometimes" get the follwoing exception running the above:
             #    yum.Errors.PackageSackError('Rpmdb changed underneath us')
             #
@@ -103,7 +103,7 @@ def posttrans_hook(conduit):
                 if f.startswith(libarched_path):
                     try:
                         t = triggers_config.get(path, "exec")
-                    except NoOptionError, e:
+                    except NoOptionError as e:
                         base.verbose_logger.error("posttrans-triggers: Ignoring path" \
                                           " %s: no 'exec' option found" % path)
                         triggers_config.remove_section(path)
@@ -145,7 +145,7 @@ def posttrans_hook(conduit):
             p = subprocess.Popen(split_cmd,
                                  stdout=poutput, stderr=perror, env=env)
 
-        except OSError, e:
+        except OSError as e:
             output = None
             if e.errno == 2:
                 # The executable wasn't found, most likely because the
@@ -154,7 +154,7 @@ def posttrans_hook(conduit):
             else:
                 error = e
 
-        except Exception, e:
+        except Exception as e:
             output = None
             error = e
 
