@@ -1,5 +1,19 @@
 Post-transaction triggers for Yum
 
+CHANGES WITH 1.3:
+  * This is a minor release with an important bug fix.
+
+  * There still were some cases where the plugin could crash when
+    trying to get the file list of a package. The code is now much
+    more robust and will simply ignore any package for which it can't
+    obtain the file list.
+
+  * Exceptions are now handled "the new way", to be more compatible
+    with Python's expectations (especially Python 3 porting).
+
+  * Some code was moved to be executed later, to avoid doing it if we
+    are going to skip the package.
+
 CHANGES WITH 1.2:
   * This is a minor release with only one fix for an important issue.
 
