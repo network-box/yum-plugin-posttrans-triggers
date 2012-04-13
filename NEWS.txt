@@ -21,7 +21,7 @@ CHANGES WITH 1.2:
     database, we now check the repositories metadata. A unit test was
     written to check this works.
 
-  * Three unit tests were added to check updtes, obsoletions and
+  * Three unit tests were added to check updates, obsoletions and
     removals.
 
   * Some refactoring happened in the unit tests, so that new ones are
