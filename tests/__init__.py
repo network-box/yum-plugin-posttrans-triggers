@@ -19,7 +19,6 @@ class TestCase(unittest.TestCase):
                                              "%s.repo" % self._testMethodName)
 
         self.default_cmd = ["/usr/bin/yum", "-y", "-c", self.yumconf,
-                            "--posttrans-triggers-print-output",
                             "--posttrans-triggers"]
 
         # -- Write the yum config and test repo --------------------
