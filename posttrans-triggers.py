@@ -47,7 +47,7 @@ class TriggerSectionDict(dict):
         return super(TriggerSectionDict, self).__setitem__(key, new_value)
 
 
-def posttrans_hook(conduit):
+def postverifytrans_hook(conduit):
     global always_run_triggers
 
     opts, args = conduit.getCmdLine()
