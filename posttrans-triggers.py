@@ -26,7 +26,6 @@ requires_api_version = '2.6'
 plugin_type = (TYPE_CORE,)
 
 always_run_triggers = False
-print_output = False
 
 triggers_configs_path = "etc/yum/pluginconf.d/posttrans-triggers.conf.d"
 
@@ -49,7 +48,7 @@ class TriggerSectionDict(dict):
 
 
 def posttrans_hook(conduit):
-    global always_run_triggers, print_output
+    global always_run_triggers
 
     opts, args = conduit.getCmdLine()
     conf = conduit.getConf()
@@ -130,20 +129,7 @@ def posttrans_hook(conduit):
 
             files_seen.append(f)
 
-    # Avoid evaluating that compound condition for each command of each trigger
-    if print_output or (opts and opts.print_output):
-        output_desired = True
-    else:
-        output_desired = False
-
     for split_cmd in triggers:
-        if output_desired:
-            poutput = subprocess.PIPE
-            perror = subprocess.STDOUT
-        else:
-            poutput = open("/dev/null", "w")
-            perror = subprocess.PIPE
-
         # Filter the environment passed to the subprocesses
         env = dict([(k, v) for (k, v) in os.environ.items() \
                             if k.startswith("LC_") \
@@ -152,8 +138,8 @@ def posttrans_hook(conduit):
         env["PATH"] = ""
 
         try:
-            p = subprocess.Popen(split_cmd,
-                                 stdout=poutput, stderr=perror, env=env)
+            p = subprocess.Popen(split_cmd, stdout=subprocess.PIPE,
+                                 stderr=subprocess.PIPE, env=env)
 
         except OSError as e:
             output = None
@@ -181,10 +167,9 @@ def posttrans_hook(conduit):
                 conduit.verbose_logger.error("posttrans-triggers: %s" % error)
 
 def config_hook(conduit):
-    global always_run_triggers, print_output
+    global always_run_triggers
 
     always_run_triggers = conduit.confBool('main', 'always_run_triggers', default=False)
-    print_output = conduit.confBool('main', 'print_output', default=False)
 
     parser = conduit.getOptParser()
     if parser:
@@ -194,6 +179,3 @@ def config_hook(conduit):
         parser.add_option('', '--posttrans-triggers', dest='posttrans_triggers',
                 action='store_true', default=False,
                 help="run the file triggers at the end of a a yum transaction")
-        parser.add_option('', '--posttrans-triggers-print-output', dest='print_output',
-                action='store_true', default=False,
-                help="print the output of the post-transaction file triggers to the console")
