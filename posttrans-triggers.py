@@ -94,8 +94,8 @@ def posttrans_hook(conduit):
                                                      pkg.arch)[0].filelist
             except Exception as e:
                 # If that still fails, log the error and give up
-                base.verbose_logger.error("posttrans-triggers: Could not get" \
-                                          " the file list for %s" % pkg.name)
+                conduit.verbose_logger.error("posttrans-triggers: Could not get" \
+                                             " the file list for %s" % pkg.name)
                 continue
 
         # Watched path might be in /usr/lib{,64}
@@ -114,8 +114,8 @@ def posttrans_hook(conduit):
                     try:
                         t = triggers_config.get(path, "exec")
                     except NoOptionError as e:
-                        base.verbose_logger.error("posttrans-triggers: Ignoring path" \
-                                          " %s: no 'exec' option found" % path)
+                        conduit.verbose_logger.error("posttrans-triggers: Ignoring path" \
+                                                     " %s: no 'exec' option found" % path)
                         triggers_config.remove_section(path)
                         continue
 
@@ -171,14 +171,14 @@ def posttrans_hook(conduit):
         else:
             output, error = p.communicate()
             if p.returncode != 0:
-                base.verbose_logger.error("posttrans-triggers: Failed to run" \
-                                          " command (%s)" % ' '.join(split_cmd))
+                conduit.verbose_logger.error("posttrans-triggers: Failed to run" \
+                                             " command (%s)" % ' '.join(split_cmd))
 
         finally:
             if output:
-                base.verbose_logger.info("posttrans-triggers: %s" % output)
+                conduit.verbose_logger.info("posttrans-triggers: %s" % output)
             if error:
-                base.verbose_logger.error("posttrans-triggers: %s" % error)
+                conduit.verbose_logger.error("posttrans-triggers: %s" % error)
 
 def config_hook(conduit):
     global always_run_triggers, print_output
