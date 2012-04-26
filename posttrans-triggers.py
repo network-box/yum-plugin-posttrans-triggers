@@ -81,16 +81,18 @@ def postverifytrans_hook(conduit):
         # installed), so let's do things the hard way (for the programmer), but
         # properly.
         try:
-            # Check the local RPM DB, faster
+            # Check the local RPM DB, since it's faster
             pkg_files = base.rpmdb.searchNevra(pkg.name, pkg.epoch,
                                                pkg.version, pkg.release,
                                                pkg.arch)[0].filelist
+
         except Exception as e:
             # If that fails, try with the repo metadata
             try:
                 pkg_files = base.pkgSack.searchNevra(pkg.name, pkg.epoch,
                                                      pkg.version, pkg.release,
                                                      pkg.arch)[0].filelist
+
             except Exception as e:
                 # If that still fails, log the error and give up
                 conduit.verbose_logger.error("posttrans-triggers: Could not get" \
