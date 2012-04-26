@@ -94,9 +94,22 @@ def postverifytrans_hook(conduit):
                                                      pkg.arch)[0].filelist
 
             except Exception as e:
-                # If that still fails, log the error and give up
-                conduit.verbose_logger.error("posttrans-triggers: Could not get" \
-                                             " the file list for %s" % pkg.name)
+                if tsmem.updated_by or tsmem.obsoleted_by:
+                    # The package has just been updated/obsoleted, so:
+                    #   1. it is not on the system any more
+                    #   2. it is probably not in the repositories any more (we
+                    #      only keep the latest version)
+                    # All in all, it's not surprising that we can't get the
+                    # file list in such a case, so let's not alarm the user.
+                    log_method = conduit.verbose_logger.debug
+
+                else:
+                    # The package should really either be on the system or in
+                    # the repositories, something went wrong...
+                    log_method = conduit.verbose_logger.error
+
+                log_method("posttrans-triggers: Could not get the file list " \
+                           "for %s, ignoring" % pkg.ui_envra)
                 continue
 
         # Watched path might be in /usr/lib{,64}
