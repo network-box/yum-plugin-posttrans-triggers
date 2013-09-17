@@ -122,7 +122,7 @@ def postverifytrans_hook(conduit):
             if f in files_seen:
                 continue
 
-            for path in triggers_config.sections():
+            for path in sorted(triggers_config.sections()):
                 libarched_path = path % {"libarch": libarch}
                 if f.startswith(libarched_path):
                     try:
@@ -144,7 +144,7 @@ def postverifytrans_hook(conduit):
 
             files_seen.append(f)
 
-    for split_cmd in triggers:
+    for split_cmd in sorted(triggers):
         # Filter the environment passed to the subprocesses
         env = dict([(k, v) for (k, v) in os.environ.items() \
                             if k.startswith("LC_") \
