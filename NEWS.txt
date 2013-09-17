@@ -1,5 +1,9 @@
 Post-transaction triggers for Yum
 
+CHANGES WITH 2.1:
+  * Try to order the commands to run in a deterministic way, so that all
+    machines getting the same updates will fail/succeed in the same way.
+
 CHANGES WITH 2.0:
   * Hook into 'postverifytrans' rather than 'posttrans', to let Yum
     verify the transaction before we do our stuff.
